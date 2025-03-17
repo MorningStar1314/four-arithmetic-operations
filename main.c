@@ -44,6 +44,9 @@ int operatorPriorty(char op){
 	else if (op == '*' || op == '/'){
 		return 2;
 	}
+	else{
+		return 0;
+	}
 }
 
 int Operation(int a, int b, char op){
@@ -92,13 +95,32 @@ int evaluate(char *ch){
 			push(&operators, ch[i]);
 			i++;
 		}
+		else if (ch[i] == ')'){
+			while (!isEmpty(&operators) && peek(&operators) != '('){
+				process(&numbers, &operators);
+			}
+			pop(&operators);
+			i++;
+		}
+		else if (ch[i] == '+' || ch[i] == '-' || ch[i] == '*' || ch[i] == '/'){
+			while (!isEmpty(&operators) && operatorPriorty(peek(&operators)) >= operatorPriorty(ch[i])){
+				process(&numbers, &operators);
+			}
+			push(&operators, ch[i]);
+			i++;
+		}
+		else{
+			i++;
+		}
 	}
 
-	
+	while (!isEmpty(&operators)){
+		process(&numbers, &operators);
+	}
+
+	return pop(&numbers);
 
 }
-
-
 
 int main() {
 	
